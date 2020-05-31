@@ -9,6 +9,7 @@ var apiRoutes         = require('./routes/api.js');
 var fccTestingRoutes  = require('./routes/fcctesting.js');
 var runner            = require('./test-runner');
 const helmet = require('helmet');
+const mongoose = require('mongoose');
 
 var app = express();
 
@@ -39,6 +40,12 @@ app.route('/')
   .get(function (req, res) {
     res.sendFile(process.cwd() + '/views/index.html');
   });
+
+
+mongoose.connect(process.env.testDB, {useNewUrlParser : true, useUnifiedTopology : true})
+mongoose.Promise = global.Promise
+var db = mongoose.connection
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 //For FCC testing purposes
 fccTestingRoutes(app);
