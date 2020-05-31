@@ -4,6 +4,8 @@ module.exports = {
     async postThread(req, res) {
         const {text, delete_password}  = req.body;
         const board = req.params.board;
+        let error = false;
+
         if(!board) res.status(400).send("No board name provided");
 
         if(!text || !delete_password) {
@@ -19,10 +21,13 @@ module.exports = {
                     delete_password
                 })
                 await newThread.save();
+                error = false;
             } else {
-                res.status(400).send(`Thread with the title "<code>${text}</code>" already exists.`);
+                error = true;
             }
-            res.redirect(`/b/${board}/`);
+
+            error ? res.send("thread doesn't exist") : res.redirect(`/b/${board}/`);
+            
         }
     },
 
