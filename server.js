@@ -17,7 +17,7 @@ app.use('/public', express.static(process.cwd() + '/public'));
 // Helmet middlewares
 app.use(helmet.dnsPrefetchControl());
 app.use(helmet.frameguard({action : 'deny'}));
-app.use(helmet.xssFilter());
+app.use(helmet.referrerPolicy({policy : 'same-origin'}));
 
 app.use(cors({origin: '*'})); //For FCC testing purposes only
 
