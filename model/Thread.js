@@ -12,7 +12,8 @@ const ThreadSchema = mongoose.Schema({
         delete_password : {type : String, required : true},
         created_on : {type : Date, default : Date.now},
         reported : {type : Boolean, default : false},
-    }], default : []}
+    }], default : []},
+    replycount : {type : Number, default : 0}
 })
 
 
