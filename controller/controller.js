@@ -85,9 +85,10 @@ module.exports = {
 
         } else {
             thread.replies = thread.replies.map(reply => {
-                reply.reported = undefined;
-                reply.delete_password = undefined;
-                return reply;
+                const test = reply.toObject();
+                delete test.reported;
+                delete test.delete_password;
+                return test;
             })
             res.json(thread);
         }
@@ -108,7 +109,6 @@ module.exports = {
 
     async deleteReply(req, res) {
         const {thread_id, reply_id, delete_password} = req.body;
-        const board = req.params.board;
         let error = "";
         const thread = await Thread.findById(thread_id);
         if(!thread) {
@@ -132,11 +132,38 @@ module.exports = {
     },
 
     async reportThread(req, res) {
-
+        const report_id = req.body.report_id;
+        const thread = await Thread.findById(report_id);
+        if(!thread) {
+            res.status(400).send("thread doesn't exist");
+        } else {
+            thread.reported = true;
+            await thread.save();
+            res.send("success");
+        }
     },
 
     async reportReply(req, res) {
+        const{thread_id, reply_id} = req.body;
+        const thread = await Thread.findById(thread_id);
+        let error = false;
+        thread.replies.map(reply => {
+            if(reply._id == reply_id) {
+                reply.reported = true;
+                error = false;
 
+            } else {
+                error = true;
+            }
+            return reply;
+        })
+
+        if(error) {
+            res.send("incorrect id");
+        } else {
+            thread.save();
+            res.send('success');
+        }
     }
 
 
